@@ -1,9 +1,15 @@
-# Vue 3 + TypeScript + Vite
+# 练习各种技术栈的项目
+1.项目搭建有哪些文件需要注意
+.prettierrc  代码格式化配置
+.prettierignore  忽略格式化的文件
+.editorconfig  编辑器配置
+package.json  项目依赖配置
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-## Recommended Setup
+最新的技术的应用，麻烦往这里试用
+canvas实践canvas的技术
+1.利用原生的canvas实现类似fabric的功能
 
-- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (previously Volar) and disable Vetur
 
-- Use [vue-tsc](https://github.com/vuejs/language-tools/tree/master/packages/tsc) for performing the same type checking from the command line, or for generating d.ts files for SFCs.
+
+漫无目的的时候就从掘金找东西练手吧

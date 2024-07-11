@@ -10,11 +10,15 @@
   },
   "dependencies": {
     "element-plus": "^2.7.4",
-    "vue": "^3.4.21"
+    "fabric": "^6.0.0-rc2",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
+    "sass": "^1.77.4",
     "typescript": "^5.2.2",
+    "unplugin-auto-import": "^0.17.6",
     "vite": "^5.2.0",
     "vue-tsc": "^2.0.6"
   }

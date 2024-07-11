@@ -18,8 +18,16 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "types": ["element-plus/global"]
   },
-  "include": ["src/**/*.ts","server/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "server/dev.js"],
+  "include": [
+    "src/**/*.ts",
+    "server/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "server/dev.js",
+    "./auto-imports.d.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -11,7 +11,7 @@ const server = await createServer({
     server: {
         port: 5000,
         host: '0.0.0.0',
-        open: '/docs/index.html',
+        open: '/',
     },
   
 })
