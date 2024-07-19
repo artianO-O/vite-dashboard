@@ -1,16 +1,29 @@
 <template>
   <div class="candy-wrap">
-    <div class="game-board">
+    <div
+      class="game-board"
+      @mousedown="mousedown"
+      @mouseup="mouseup"
+      @touchstart="mousedown"
+      @touchend="mouseup"
+      :style="{
+        width: toRem(board.getBoxSize()),
+        height: toRem(board.getBoxSize())
+      }"
+    >
       <img
-        v-for="candy in game.square"
+        v-for="candy in candyList"
         class="candy"
+        @transitionend="transitionend"
+        :data-id="candy.id"
         :data-position="`${candy.row}_${candy.col}`"
         :src="candyImages[candy.color]"
+        :key="candy.id"
         :style="{
           width: toRem(candy.width),
           height: toRem(candy.height),
-          top: toRem(candy.x + candy.r),
-          left: toRem(candy.y + candy.r)
+          top: toRem(candy.y + candy.r),
+          left: toRem(candy.x + candy.r)
         }"
         alt=""
       />
@@ -36,14 +49,66 @@ const candyImages = {
   orange
 }
 
-const game = reactive({ square: [] })
 const board = new Board()
-board.prepareNewGame()
-game.square = board.getAllCandies()
-console.log(board.square)
+const rBoard = reactive(board)
+rBoard.prepareNewGame()
+
+const candyList = computed(() => {
+  return rBoard.getAllCandies()
+})
+
+const map = computed(() => {
+  return game.square.map((candy) => {
+    return candy.id
+  })
+})
 
 const toRem = (num) => {
   return num / 100 + 'rem'
+}
+
+const mousedown = (e) => {
+  const curCandy = e.target
+  console.log(curCandy)
+  const poi = e.type == 'touchstart' ? e.changedTouches[0] : e
+  const [row, col] = curCandy.dataset.position.split('_')
+
+  rBoard.fromCandy = rBoard.getCandyAt(row, col)
+  // console.log(rBoard.square)
+  // console.log(rBoard.fromCandy, '可能这里错了？', rBoard.fromCandy.toString())
+  rBoard.mouse_poi = { x: poi.clientX, y: poi.clientY }
+}
+
+const mouseup = (e) => {
+  const { x, y } = rBoard.mouse_poi
+  const poi = e.type == 'touchend' ? e.changedTouches[0] : e
+  const offsetX = poi.clientX - x // 大于0向右，小于0向左
+  const offsetY = poi.clientY - y // 大于0向下，小于0向上
+  const direction =
+    Math.abs(offsetX) > Math.abs(offsetY)
+      ? offsetX > 0
+        ? 'right'
+        : 'left'
+      : offsetY > 0
+      ? 'down'
+      : 'up'
+
+  const swap = rBoard.getCandiesToCrushGivenMove(rBoard.fromCandy, direction)
+  console.log(rBoard.fromCandy, direction, swap)
+  // 位置交换dom操作实现
+  if (swap?.length) {
+    // 只有位置不变其他都变
+    rBoard.swap = swap
+    rBoard.swapCandies(swap)
+  }
+}
+
+const transitionend = () => {
+  if (rBoard.swap?.length > 0) {
+    // 仅数据交换
+    rBoard.swapData()
+  }
+  rBoard.flag = false
 }
 </script>
 
@@ -53,12 +118,11 @@ body {
 }
 .candy-wrap {
   .game-board {
-    width: 6rem;
-    height: 6rem;
     border: 0.02rem solid #ccc;
     position: relative;
     .candy {
       position: absolute;
+      transition: all 0.3s linear;
     }
   }
 }

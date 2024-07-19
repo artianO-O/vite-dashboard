@@ -12,7 +12,7 @@ const routes = [
   {
     path: '/',
     component: Home,
-    redirect: '/alpha',
+    redirect: '/candy',
     children: [
       // { path: '/canvas', component: Canvas },
       // { path: '/video', component: PlayVideo },

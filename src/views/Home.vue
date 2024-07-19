@@ -1,23 +1,20 @@
 <template>
-<div class="header">
-    <Header></Header>
+  <div class="header">
+    <!-- <Header></Header> -->
     <div class="content">
-        <router-view></router-view>
+      <router-view></router-view>
     </div>
-</div>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import Header from '../components/Header.vue';
-
-
+// import Header from '../components/Header.vue';
 </script>
 
 <style lang="scss" scoped>
-
 .header {
-    .content {
-        margin-top: 44px
-    }
+  .content {
+    margin-top: 44px;
+  }
 }
 </style>

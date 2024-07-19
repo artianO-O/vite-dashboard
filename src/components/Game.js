@@ -1,24 +1,76 @@
 // 面板对象
-const size = 8
-const boxSize = 600
+const size = 7
+const boxSize = 750
 class Board {
   score = 0
   square = []
   scoring = false
   candyCounter = 0
+  flag = false
+  swap = []
+  fromCandy = null
+  mouse_poi = {}
   constructor() {
     this.square = new Array(size)
     for (var i = 0; i <= size; i++) {
       this.square[i] = []
     }
+    this.scoring = false
   }
   getSize() {
     return size
   }
+  getBoxSize() {
+    return boxSize
+  }
   // 获取指定位置糖果
   getCandyAt(row, col) {
     if (this.isValidLocation(row, col)) {
+      // console.log(this.square)
       return this.square[row][col]
+    }
+  }
+  // 交换位置
+  swapCandies() {
+    if (this.flag) return
+    this.flag = true
+    const swap = this.swap
+    console.log(swap)
+    const tempCandy = { ...swap[0] }
+    // 除了行列之外，其他数据都得交换
+    console.log(tempCandy)
+    if (swap[0] && swap[1]) {
+      const { row: row0, col: col0 } = swap[0]
+      const { row: row1, col: col1 } = swap[1]
+      // 第一步只交换位置信息
+      Object.assign(this.square[row0][col0], {
+        x: swap[1].x,
+        y: swap[1].y
+      })
+      Object.assign(this.square[row1][col1], {
+        x: tempCandy.x,
+        y: tempCandy.y
+      })
+    }
+  }
+  // 交换数据
+  swapData() {
+    const swap = this.swap
+    const tempCandy = { ...swap[0] }
+    // 除了行列之外，其他数据都得交换
+    console.log(tempCandy)
+    if (swap[0] && swap[1]) {
+      const { row: row0, col: col0 } = swap[0]
+      const { row: row1, col: col1 } = swap[1]
+      Object.assign(this.square[row0][col0], swap[1], {
+        row: row0,
+        col: col0
+      })
+      Object.assign(this.square[row1][col1], tempCandy, {
+        row: row1,
+        col: col1
+      })
+      this.swap = []
     }
   }
   isValidLocation(row, col) {
@@ -82,7 +134,6 @@ class Board {
     }
   }
   prepareNewGame() {
-    this.scoring = false
     this.populateBoard()
     // while (true) {
     //   // 初始化糖果面板
@@ -95,13 +146,45 @@ class Board {
     // }
     this.scoring = true
   }
+  getCandyInDirection(fromCandy, direction) {
+    switch (direction) {
+      case 'up': {
+        return this.getCandyAt(fromCandy.row - 1, fromCandy.col)
+      }
+      case 'down': {
+        return this.getCandyAt(fromCandy.row + 1, fromCandy.col)
+      }
+      case 'left': {
+        return this.getCandyAt(fromCandy.row, fromCandy.col - 1)
+      }
+      case 'right': {
+        return this.getCandyAt(fromCandy.row, fromCandy.col + 1)
+      }
+    }
+  }
+  getCandiesToCrushGivenMove(fromCandy, direction) {
+    var toCandy = this.getCandyInDirection(fromCandy, direction)
+    // console.log(fromCandy, direction)
+    // console.log(toCandy)
+    // || toCandy.color == fromCandy.color
+    if (!toCandy) {
+      return []
+    }
+    var swap = [fromCandy, toCandy]
+
+    return swap
+
+    // return [].concat.apply([], connected) //flatten nested lists
+  }
 }
 
 // Candy游戏对象，负责存储颜色，位置，id等数据
 const Candy = function (color, id) {
-  Object.defineProperty(this, 'color', { value: color, writable: false })
-  Object.defineProperty(this, 'id', { value: id, writable: false })
+  // Object.defineProperty(this, 'color', { value: color, writable: true })
+  // Object.defineProperty(this, 'id', { value: id, writable: true })
 
+  this.color = color
+  this.id = id
   this.row = null
   this.col = null
   this.x = 0
