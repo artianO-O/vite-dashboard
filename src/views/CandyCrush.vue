@@ -14,11 +14,11 @@
       <img
         v-for="candy in candyList"
         class="candy"
-        @transitionend="transitionend"
         :data-id="candy.id"
         :data-position="`${candy.row}_${candy.col}`"
         :src="candyImages[candy.color]"
         :key="candy.id"
+        v-on="candy.events"
         :style="{
           width: toRem(candy.width),
           height: toRem(candy.height),
@@ -52,6 +52,7 @@ const candyImages = {
 const board = new Board()
 const rBoard = reactive(board)
 rBoard.prepareNewGame()
+// 初始化，让棋盘没有可销毁的糖果
 
 const candyList = computed(() => {
   return rBoard.getAllCandies()
@@ -68,6 +69,7 @@ const toRem = (num) => {
 }
 
 const mousedown = (e) => {
+  if (rBoard.flag) return
   const curCandy = e.target
   console.log(curCandy)
   const poi = e.type == 'touchstart' ? e.changedTouches[0] : e
@@ -80,6 +82,7 @@ const mousedown = (e) => {
 }
 
 const mouseup = (e) => {
+  if (rBoard.flag) return
   const { x, y } = rBoard.mouse_poi
   const poi = e.type == 'touchend' ? e.changedTouches[0] : e
   const offsetX = poi.clientX - x // 大于0向右，小于0向左
@@ -103,6 +106,7 @@ const mouseup = (e) => {
   }
 }
 
+// 这里其实把逻辑封装到一起,封装事件
 const transitionend = () => {
   if (rBoard.swap?.length > 0) {
     // 仅数据交换
@@ -113,6 +117,7 @@ const transitionend = () => {
 </script>
 
 <style lang="scss" scoped>
+@import '../scss/animate.scss';
 body {
   overflow: hidden;
 }
