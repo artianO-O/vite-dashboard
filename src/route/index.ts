@@ -8,12 +8,14 @@ import Home from '../views/Home.vue'
 import CandyCrush from '../views/CandyCrush.vue'
 import AlphaVedio from '../views/AlphaVedio.vue'
 import ThreeJs from '../views/ThreeJs.vue'
+import Phaser from '../views/Phaser.vue'
+import BattleFly from '../views/BattleFly.vue'
 
 const routes = [
   {
     path: '/',
     component: Home,
-    redirect: '/candy',
+    redirect: '/fly',
     children: [
       // { path: '/canvas', component: Canvas },
       // { path: '/video', component: PlayVideo },
@@ -22,6 +24,8 @@ const routes = [
       { path: '/candy', component: CandyCrush },
       { path: '/alpha', component: AlphaVedio },
       { path: '/threejs', component: ThreeJs },
+      { path: '/phaser', component: Phaser },
+      { path: '/fly', component: BattleFly }
     ]
   }
 ]
