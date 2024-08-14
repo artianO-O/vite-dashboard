@@ -7,6 +7,7 @@ import Base from '../views/Base.vue'
 import Home from '../views/Home.vue'
 import CandyCrush from '../views/CandyCrush.vue'
 import AlphaVedio from '../views/AlphaVedio.vue'
+import ThreeJs from '../views/ThreeJs.vue'
 
 const routes = [
   {
@@ -19,7 +20,8 @@ const routes = [
       { path: '/fragment', component: Fragment },
       { path: '/base', component: Base },
       { path: '/candy', component: CandyCrush },
-      { path: '/alpha', component: AlphaVedio }
+      { path: '/alpha', component: AlphaVedio },
+      { path: '/threejs', component: ThreeJs },
     ]
   }
 ]
