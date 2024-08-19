@@ -22,26 +22,28 @@ loadImages()
  */
 const gameSenceCenter = {}
 
+const enemyList = ['duck-1', 'duck-2']
+
 gameSenceCenter.start = {
   key: 'start',
   create() {
     console.log('执行create了')
-    this.add.image(0, 0, 'bg').setOrigin(0)
+    this.add.image(0, 0, 'bg', this.game.config.width, this.game.config.height).setOrigin(0)
     this.add.image(this.game.config.width / 2, this.game.config.height - 16, 'copyright')
-    const plane = this.add.sprite(this.game.config.width / 2, 100, 'myplane')
+    // const plane = this.add.sprite(this.game.config.width / 2, 100, 'myplane')
 
     // 创建飞行帧动画
-    this.anims.create({
-      key: 'fly',
-      frames: this.anims.generateFrameNumbers('myplane', { start: 0, end: 3 }),
-      frameRate: 10,
-      repeat: -1
-    })
+    // this.anims.create({
+    //   key: 'fly',
+    //   frames: this.anims.generateFrameNumbers('myplane', { start: 0, end: 3 }),
+    //   frameRate: 10,
+    //   repeat: -1
+    // })
 
-    plane.anims.play('fly')
+    // plane.anims.play('fly')
 
     const startButton = this.add
-      .sprite(this.game.config.width / 2, 200, 'startbutton', 1)
+      .sprite(this.game.config.width / 2, this.game.config.height / 2, 'startbutton', 1)
       .setInteractive()
     startButton.on('pointerdown', () => {
       startButton.setFrame(0)
@@ -158,42 +160,48 @@ gameSenceCenter.play = {
     // 引入飞机精灵
 
     const plane = (this.plane = this.add
-      .sprite(this.game.config.width / 2, this.game.config.height - 100, 'myplane')
+      .sprite(0, 784, 'gun-l')
+      .setOrigin(0, 0)
+      .setInteractive({ draggable: false }))
+
+    const plane2 = (this.plane2 = this.add
+      .sprite(544, 784, 'gun-r')
+      .setOrigin(0, 0)
       .setInteractive({ draggable: false }))
 
     // 创建飞行帧动画
-    this.anims.create({
-      key: 'fly',
-      frames: this.anims.generateFrameNumbers('myplane', { start: 0, end: 3 }),
-      frameRate: 10,
-      repeat: -1
-    })
+    // this.anims.create({
+    //   key: 'fly',
+    //   frames: this.anims.generateFrameNumbers('myplane', { start: 0, end: 3 }),
+    //   frameRate: 10,
+    //   repeat: -1
+    // })
     // 飞机调用飞行动画
-    plane.anims.play('fly')
+    // plane.anims.play('fly')
 
     this.scoreText = this.add.text(0, 0, 'Score: 0', { color: '#ff0000', fontSize: '16px' })
     this.score = 0
 
-    this.tweens.add({
-      targets: plane,
-      y: this.game.config.height - plane.height,
-      duration: 1000,
-      onComplete: () => {
-        this.plane.on('drag', function (pointer, dragX, dragY) {
-          this.x = dragX
-          this.y = dragY
-        })
-        this.physics.add.existing(this.plane)
-        this.plane.body.setCollideWorldBounds(true)
-      }
-    })
+    // this.tweens.add({
+    //   targets: plane,
+    //   y: this.game.config.height - plane.height,
+    //   duration: 1000,
+    //   onComplete: () => {
+    //     this.plane.on('drag', function (pointer, dragX, dragY) {
+    //       this.x = dragX
+    //       this.y = dragY
+    //     })
+    //     this.physics.add.existing(this.plane)
+    //     this.plane.body.setCollideWorldBounds(true)
+    //   }
+    // })
 
     // 创建子弹组
     // 首先我们创建一个生成子弹的class
     const BulletClass = new Phaser.Class({
       Extends: Phaser.GameObjects.Sprite,
       initialize: function Bullet(scene) {
-        Phaser.GameObjects.Sprite.call(this, scene, 0, 0, 'mybullet')
+        Phaser.GameObjects.Sprite.call(this, scene, 0, 0, 'bullet-1')
       },
       fire: function () {
         this.setActive(true)
@@ -246,13 +254,13 @@ gameSenceCenter.play = {
     }
 
     // 创建敌机组
-    ;['enemy1', 'enemy2', 'enemy3'].forEach((item) => {
+    enemyList.forEach((item) => {
       const EnemyClass = EnemyFactory(item, this.game.config.height)
       this[item] = this.add.group({
         classType: EnemyClass,
         runChildUpdate: true
       })
-      const key = item.replace('enemy', '')
+      const key = item.replace('duck-', '')
       // 创建敌机爆炸帧动画 敌方飞机爆炸不循环 速度快点
       this.anims.create({
         key: `enemyBoom${key}`,
@@ -275,16 +283,14 @@ gameSenceCenter.play = {
     this.enemyCount = 0
 
     // 添加隐藏的护栏阻挡飞机
-    const rect1 = this.add
-      .rectangle(0, (this.game.config.height / 4) * 3, this.game.config.width, 1)
-      .setOrigin(0, 0)
+    const rect1 = this.add.rectangle(0, 780, this.game.config.width, 1).setOrigin(0, 0)
     // 将无形矩形转换为物理对象
     this.physics.add.existing(rect1, true)
     // 转换为物理对象并设置物理属性
     this.physics.world.enable(rect1, Phaser.Physics.Arcade.DYNAMIC_BODY)
     rect1.body.immovable = true // 设置为不可移动
     rect1.body.allowGravity = false // 不受重力影响
-    ;['enemy1', 'enemy2', 'enemy3'].forEach((item) => {
+    enemyList.forEach((item) => {
       this.physics.add.overlap(rect1, this[item], (rect, enemy) => {
         enemy.body.setVelocity(0, 0)
         // console.log('你撞上隐形陷阱啦')
@@ -292,7 +298,7 @@ gameSenceCenter.play = {
     })
 
     // 这里设置一下敌机组和飞机的碰撞检测
-    ;['enemy1', 'enemy2', 'enemy3'].forEach((item) => {
+    enemyList.forEach((item) => {
       this.physics.add.overlap(
         this.bullets,
         this[item],
@@ -301,7 +307,9 @@ gameSenceCenter.play = {
           // 检测碰撞后先减生命，发现不够了再让敌机消失，调用爆炸帧动画
           enemy.life = enemy.life - 1
           enemy.destroy()
-          const key = item.replace('enemy', '')
+          const key = item.replace('duck-', '')
+
+          // const key = item.replace('enemy', '')
 
           // 我们在敌机消失的位置上新增加一个精灵，用来展示帧动画
           const enemyFrame = this.add.sprite(enemy.x, enemy.y, `explode${key}`)
@@ -331,7 +339,7 @@ gameSenceCenter.play = {
       .setOrigin(0, 0)
     // 监听点击事件
     rect.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, this.game.config.width, this.game.config.height),
+      new Phaser.Geom.Rectangle(0, 0, this.game.config.width / 2, this.game.config.height),
       Phaser.Geom.Rectangle.Contains
     )
     rect.on('pointerup', (pointer) => {
@@ -339,7 +347,28 @@ gameSenceCenter.play = {
       const bullet = this.bullets.getFirstDead(true)
       if (bullet) {
         bullet.fire()
-        bullet.setPosition(this.plane.x, this.plane.y - this.plane.height / 2)
+        bullet.setPosition(120, 688)
+        this.physics.add.existing(bullet)
+        bullet.body.setVelocity(0, -300)
+      }
+    })
+
+    const rect2 = this.add
+      .rectangle(this.game.config.width / 2, 0, this.game.config.width / 2, this.game.config.height)
+      .setOrigin(0, 0)
+    // 监听点击事件
+    rect2.setInteractive(
+      new Phaser.Geom.Rectangle(0, 0, this.game.config.width, this.game.config.height),
+      Phaser.Geom.Rectangle.Contains
+    )
+    rect2.on('pointerup', (pointer) => {
+      // 点击事件处理逻辑
+      const bullet = this.bullets.getFirstDead(true)
+      console.log(bullet)
+      if (bullet) {
+        bullet.setTexture('bullet-2')
+        bullet.fire()
+        bullet.setPosition(530, 688)
         this.physics.add.existing(bullet)
         bullet.body.setVelocity(0, -300)
       }
@@ -400,18 +429,16 @@ gameSenceCenter.play = {
     // }
 
     // 引入敌机
-    if (time - this.enemyBeforeTime > 300 && this.enemyCount < this.maxEnemyCount) {
+    if (time - this.enemyBeforeTime > 1000 && this.enemyCount < this.maxEnemyCount) {
       // Phaser提供的Math对象，Between表示两者之间的整数
       // api: https://photonstorm.github.io/phaser3-docs/Phaser.Math.html
-      const enemyIndex = Phaser.Math.Between(1, 3)
-      const enemy = this[`enemy${enemyIndex}`].getFirstDead(true)
+      const enemyIndex = Phaser.Math.Between(1, 2)
+      const enemy = this[`duck-${enemyIndex}`].getFirstDead(true)
       if (enemy) {
         enemy.show()
         enemy.setOrigin(0.5, 0.5)
-        enemy.setPosition(
-          Phaser.Math.Between(0 + enemy.width, this.game.config.width - enemy.width),
-          0
-        )
+        const p_x = enemyIndex == 1 ? [40, 120] : [390, 470]
+        enemy.setPosition(Phaser.Math.Between(p_x[0], p_x[1]), 0).setOrigin(0, 0)
         this.physics.add.existing(enemy)
         enemy.body.setVelocity(0, 50)
         this.enemyCount++
@@ -419,7 +446,7 @@ gameSenceCenter.play = {
       }
     }
 
-    console.log(this.bullets.children.size)
+    // console.log(this.bullets.children.size)
     // 设置垂直滚动
     // api链接： https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.TileSprite.html
     this.bg.tilePositionY -= 1
@@ -430,8 +457,8 @@ const config = {
   parent: 'game-c',
   type: Phaser.AUTO,
   backgroundColor: '#ffffff',
-  width: 240,
-  height: 400,
+  width: 750,
+  height: 1302,
   scene: [gameSenceCenter.boot, gameSenceCenter.start, gameSenceCenter.play],
   canvasStyle: 'width:100%;height:100%',
   physics: {
